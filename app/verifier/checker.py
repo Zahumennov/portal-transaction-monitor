@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 MOCK_API_DATA = {
     "00445790": {
         "name": "TESCO PLC",
-        "status": "Active",
+        "status": "Dissolved",  # Triggers ANOMALY
         "address": "Tesco House, Shire Park, Kestrel Way, Welwyn Garden City, AL7 1GA",
         "incorporation_date": "1947-11-27",
     },
