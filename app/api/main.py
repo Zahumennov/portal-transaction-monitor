@@ -14,7 +14,13 @@ async def lifespan(app: FastAPI):
     """
     Creates database tables on startup if they don't exist.
     """
-    engine = create_async_engine(settings.database_url)
+    db_url = settings.database_url.replace(
+        "postgresql+asyncpg://", "postgresql+asyncpg://"
+    )
+    engine = create_async_engine(
+        settings.database_url,
+        connect_args={"ssl": False},
+    )
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database tables created")
