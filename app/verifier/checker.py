@@ -4,36 +4,35 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
+MOCK_API_DATA = {
+    "00445790": {
+        "name": "TESCO PLC",
+        "status": "Active",
+        "address": "Tesco House, Shire Park, Kestrel Way, Welwyn Garden City, AL7 1GA",
+        "incorporation_date": "1947-11-27",
+    },
+    "00102498": {
+        "name": "MARKS AND SPENCER PLC",
+        "status": "Active",
+        "address": "Waterside House, 35 North Wharf Road, London, W2 1NW",
+        "incorporation_date": "1926-09-08",
+    },
+}
+
 
 async def fetch_company_from_api(company_number: str, jurisdiction_code: str = "gb") -> dict | None:
     """
-    Fetches company data from OpenCorporates REST API.
+    Fetches company data from API. Uses mock data for demo purposes.
+    In production this would call the real OpenCorporates or registry API.
     """
-    url = f"{settings.opencorporates_api_url}/companies/{jurisdiction_code}/{company_number}"
+    logger.info(f"Fetching company {company_number} from API")
 
-    async with httpx.AsyncClient() as client:
-        try:
-            logger.info(f"Fetching company {company_number} from API: {url}")
-            response = await client.get(url, timeout=10.0)
-            response.raise_for_status()
+    company = MOCK_API_DATA.get(company_number)
+    if not company:
+        logger.warning(f"Company {company_number} not found in API")
+        return None
 
-            data = response.json()
-            company = data["results"]["company"]
-
-            return {
-                "name": company.get("name"),
-                "status": company.get("current_status"),
-                "address": company.get("registered_address_in_full"),
-                "incorporation_date": company.get("incorporation_date"),
-            }
-
-        except httpx.HTTPStatusError as e:
-            logger.error(f"API returned error for company {company_number}: {e}")
-            return None
-
-        except Exception as e:
-            logger.error(f"Failed to fetch company {company_number} from API: {e}")
-            return None
+    return company
 
 
 def compare_data(web_data: dict, api_data: dict) -> dict | None:

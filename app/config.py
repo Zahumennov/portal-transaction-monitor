@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     # Redis
     redis_url: str
 
+    # Portal
+    portal_base_url: str = "http://mock_portal:8001"
+
     # OpenCorporates
     opencorporates_api_url: str = "https://api.opencorporates.com/v0.4"
 
